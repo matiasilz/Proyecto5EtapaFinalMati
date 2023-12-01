@@ -4,6 +4,7 @@ import NodosAST.NodoBloque;
 import analizadorLexico.Token;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class Metodo {
@@ -221,6 +222,11 @@ public class Metodo {
             p.setOffset(i);
             i--;
         }
+        System.out.println("\n");
+        System.out.println("Printing offsets of the params for method " + nombre);
+        for (Parametro p : parametrosEnOrden) {
+            System.out.println(p.getNombre() + " " + p.getOffset());
+        }
     }
 
     public String generarEtiqueta() {
@@ -235,4 +241,5 @@ public class Metodo {
         this.offset = offSetVt;
         this.tieneOffset = true;
     }
+
 }

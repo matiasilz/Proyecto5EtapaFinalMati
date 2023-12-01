@@ -7,7 +7,7 @@ public class Tipo {
     public Token getToken() {
         return tokenTipo;
     }
-    protected Token tokenTipo;
+    public Token tokenTipo;
     protected TablaDeSimbolos tabladeSimbolos;
     public Tipo(Token actualToken, TablaDeSimbolos tabladeSimbolos) {
         tokenTipo = actualToken;

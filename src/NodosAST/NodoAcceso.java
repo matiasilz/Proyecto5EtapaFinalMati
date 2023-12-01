@@ -18,6 +18,7 @@ public class NodoAcceso implements NodoBase {
     public NodoBloque bloqueContenedor;
     public Metodo metodoALlamar;
     public Atributo atributo;
+    public boolean estaALaIzquierdaDeAsignacion = false;
 
     public NodoAcceso(Token tk, TablaDeSimbolos tablaDeSimbolos, NodoBloque bloque) {
         this.token = tk;
@@ -46,6 +47,9 @@ public class NodoAcceso implements NodoBase {
                 } else {
                     retorno = getType();
                 }
+                for (NodoBase arg : argsActuales) {
+                    arg.check();
+                }
             } else {
                 Clase claseQueMeContiene = tablaDeSimbolos.getClaseOInterface(encadenadoPadre.getType().getToken().getLexema());
                 Metodo metodoALlamar = claseQueMeContiene.getMetodos().get(token.getLexema());
@@ -63,12 +67,16 @@ public class NodoAcceso implements NodoBase {
                 } else {
                     retorno = getType();
                 }
+                for (NodoBase arg : argsActuales) {
+                    arg.check();
+                }
             }
         } else {
             //Es un acceso a un atributo or this
             if (encadenadoPadre == null) {
                 if(!token.getLexema().equals("this")){
-                     atributo = bloqueContenedor.getVisibles(token.getLexema());
+                    System.out.println("Buscando atributo "+token.getLexema()+" en la clase "+bloqueContenedor.getClaseActual().getNombre());
+                    atributo = bloqueContenedor.getVisibles(token.getLexema());
                     if (atributo == null)
                         throw new SemanticoExcepcion(token, "No existe el atributo " + token.getLexema() + " en la clase " + bloqueContenedor.getClaseActual().getNombre());
                     setTipo(atributo.getTipo());
@@ -102,6 +110,7 @@ public class NodoAcceso implements NodoBase {
             }
 
         }
+        tipo = retorno;
         return retorno;
     }
 
@@ -139,6 +148,7 @@ public class NodoAcceso implements NodoBase {
 
     @Override
     public void generarCodigo() {
+        System.out.println("Generando codigo para " + token.getLexema());
         if(esMetodo){
             generarCodigoParaMetodo();
         } else {
@@ -152,7 +162,7 @@ public class NodoAcceso implements NodoBase {
     private void generarCodigoParaAtributos() {
         if(atributo.esAtributo()){
             tablaDeSimbolos.codigoGenerado.add("LOAD 3 ;Apilo this");
-            if(encadenadoHijo!=null){
+            if(!estaALaIzquierdaDeAsignacion || encadenadoHijo!=null){
                 tablaDeSimbolos.codigoGenerado.add("LOADREF "+ atributo.getOffset());
             }
             else{
@@ -161,7 +171,7 @@ public class NodoAcceso implements NodoBase {
             }
         }
         else if (atributo.isParametro()){
-            if(encadenadoHijo!=null){
+            if(!estaALaIzquierdaDeAsignacion || encadenadoHijo!=null){
                 tablaDeSimbolos.codigoGenerado.add("LOAD "+ atributo.getOffset());
             }
             else{
@@ -169,7 +179,7 @@ public class NodoAcceso implements NodoBase {
             }
         }
         else if (atributo.isVarLocal()){
-            if(encadenadoHijo!=null){
+            if(!estaALaIzquierdaDeAsignacion || encadenadoHijo!=null){
                 tablaDeSimbolos.codigoGenerado.add("LOAD "+  atributo.getOffset());
             }
             else{
@@ -192,7 +202,9 @@ public class NodoAcceso implements NodoBase {
             tablaDeSimbolos.codigoGenerado.add("CALL");
         }
         else{
-            tablaDeSimbolos.codigoGenerado.add("LOAD 3 ;Se apila this");
+            if (encadenadoPadre == null)
+                tablaDeSimbolos.codigoGenerado.add("LOAD 3 ;Se apila this");
+
             if (!metodoALlamar.getTipo().getToken().getLexema().equals("void")){
                 tablaDeSimbolos.codigoGenerado.add("RMEM 1");
                 tablaDeSimbolos.codigoGenerado.add("SWAP");
@@ -239,6 +251,14 @@ public class NodoAcceso implements NodoBase {
         return this.esMetodo;
     }
 
+    public boolean alFinalDelEncadenadoEsMetodo() {
+        if (encadenadoHijo == null) {
+            return esMetodo;
+        } else {
+            return encadenadoHijo.alFinalDelEncadenadoEsMetodo();
+        }
+    }
+
     public void setArgsActuales(LinkedList<NodoBase> argsActuales) {
         this.argsActuales = argsActuales;
     }
@@ -265,5 +285,13 @@ public class NodoAcceso implements NodoBase {
 
     public void setMetodoALlamar(Metodo metodoALlamar) {
         this.metodoALlamar = metodoALlamar;
+    }
+
+    public void setEstaALaIzquierdaDeAsignacion() {
+        this.estaALaIzquierdaDeAsignacion = true;
+    }
+
+    public Tipo getTipo() {
+        return tipo;
     }
 }

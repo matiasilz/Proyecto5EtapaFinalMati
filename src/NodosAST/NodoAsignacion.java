@@ -46,6 +46,8 @@ public class NodoAsignacion implements NodoExpInterface {
         if (!((NodoAcceso) izquierda).alFinalEsAsignable()) {
             throw new SemanticoExcepcion(token, "Error en la sentencia de asignación: La variable de la izquierda no es asignable");
         }
+        NodoAcceso nodoAcceso = (NodoAcceso) izquierda;
+        nodoAcceso.setEstaALaIzquierdaDeAsignacion();
         return tipoIzq;
 
     }

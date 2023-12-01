@@ -4,16 +4,16 @@ import NodosAST.NodoBloque;
 import analizadorLexico.Token;
 
 public class Atributo {
-    private Token tkAtributo;
-    private String nombre;
-    private Tipo tipo;
-    private NodoBloque bloqueAtributo;
-    private int offset;
-    private boolean tieneOffset;
-    private boolean statico;
-    private boolean varLocal;
-    private boolean parametro;
-    private boolean esAtributo;
+    protected Token tkAtributo;
+    protected String nombre;
+    protected Tipo tipo;
+    protected NodoBloque bloqueAtributo;
+    protected int offset;
+    protected boolean tieneOffset;
+    protected boolean statico;
+    protected boolean varLocal;
+    protected boolean parametro;
+    protected boolean esAtributo;
 
     public Atributo(Token tkAtributo, Tipo tipo)
     {
@@ -25,7 +25,7 @@ public class Atributo {
         this.tieneOffset = false;
         this.varLocal = false;
         this.parametro = false;
-        this.esAtributo = true;
+        this.esAtributo = false;
     }
     public Token getTkAtributo() {
         return tkAtributo;

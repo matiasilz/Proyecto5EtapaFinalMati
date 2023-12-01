@@ -55,12 +55,19 @@ public class NodoExpLit implements NodoExpInterface {
                 tablaDeSimbolos.codigoGenerado.add("PUSH " + token.getLexema());
                 break;
             case "charLiteral":
-                tablaDeSimbolos.codigoGenerado.add("PUSH " + token.getLexema());
+                String lexeme = token.getLexema();
+                String lexemeWithoutQuotes = lexeme.substring(1, lexeme.length()-1);
+                char charLiteral = lexemeWithoutQuotes.charAt(0);
+                if(charLiteral == '\\') {
+                    charLiteral = lexemeWithoutQuotes.charAt(1);
+                }
+                int characterAsNumber = charLiteral;
+                tablaDeSimbolos.codigoGenerado.add("PUSH " + characterAsNumber);
                 break;
             case "stringLiteral":
                 tablaDeSimbolos.codigoGenerado.add(".DATA");
                 String etiquetaString = "etiquetaString" + this.cantidadEtiquetasString++;
-                tablaDeSimbolos.codigoGenerado.add(etiquetaString + " " + "DW " + token.getLexema() + ", 0");
+                tablaDeSimbolos.codigoGenerado.add(etiquetaString + ": " + "DW " + token.getLexema() + ", 0");
                 tablaDeSimbolos.codigoGenerado.add(".CODE");
                 tablaDeSimbolos.codigoGenerado.add("PUSH " + etiquetaString);
                 break;

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="CeIVM-cei2011">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/CeIVM-cei2011.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

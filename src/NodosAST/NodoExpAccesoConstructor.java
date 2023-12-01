@@ -47,17 +47,18 @@ public class NodoExpAccesoConstructor extends NodoAcceso {
     public void generarCodigo() {
         tablaDeSimbolos.codigoGenerado.add("RMEM 1");
         tablaDeSimbolos.codigoGenerado.add("PUSH " + (tablaDeSimbolos.getClaseOInterface(idClase.getLexema()).getAtributos().size() + 1));
-        tablaDeSimbolos.codigoGenerado.add("PUSH lmalloc");
+        tablaDeSimbolos.codigoGenerado.add("PUSH Lmalloc");
         tablaDeSimbolos.codigoGenerado.add("CALL");
         tablaDeSimbolos.codigoGenerado.add("DUP");
-        tablaDeSimbolos.codigoGenerado.add("PUSH VT_" + token.getLexema());
+        tablaDeSimbolos.codigoGenerado.add("PUSH VT_" + idClase.getLexema());
         tablaDeSimbolos.codigoGenerado.add("STOREREF 0");
+        tablaDeSimbolos.codigoGenerado.add("DUP");
         Collections.reverse(args);
         for (NodoBase exp : args) {
             exp.generarCodigo();
             tablaDeSimbolos.codigoGenerado.add("SWAP");
         }
-        Collections.reverse(getArgsActuales());
+        Collections.reverse(args);
         tablaDeSimbolos.codigoGenerado.add("PUSH " + tablaDeSimbolos.getClaseOInterface(idClase.getLexema()).getConstructor().generarEtiqueta());
         tablaDeSimbolos.codigoGenerado.add("CALL");
 

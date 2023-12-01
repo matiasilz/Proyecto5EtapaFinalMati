@@ -18,13 +18,13 @@ Lmalloc:
  RET 1
 .DATA
 VT_Init:
- DW debugPrint, main
+ NOP
 VT_Object:
- DW debugPrint
+ NOP
 VT_String:
- DW debugPrint
+ NOP
 VT_System:
- DW printC, printS, println, printCln, printSln, read, printB, printIln, debugPrint, printI, printBln
+ NOP
 .CODE
  main:
  LOADFP
@@ -36,6 +36,13 @@ VT_System:
  FMEM 0
  STOREFP
  RET 0
+  
+ Init:
+ LOADFP
+ LOADSP
+ STOREFP
+ STOREFP
+ RET 1
  debugPrint:
  LOADFP
  LOADSP
@@ -43,6 +50,19 @@ VT_System:
  LOAD 3
  IPRINT
  PRNLN
+ STOREFP
+ RET 1
+  
+ Object:
+ LOADFP
+ LOADSP
+ STOREFP
+ STOREFP
+ RET 1
+ String:
+ LOADFP
+ LOADSP
+ STOREFP
  STOREFP
  RET 1
  printC:
@@ -53,6 +73,7 @@ VT_System:
  CPRINT
  STOREFP
  RET 1
+  
  printS:
  LOADFP
  LOADSP
@@ -61,6 +82,7 @@ VT_System:
  SPRINT
  STOREFP
  RET 1
+  
  println:
  LOADFP
  LOADSP
@@ -69,6 +91,7 @@ VT_System:
  PRNLN
  STOREFP
  RET 0
+  
  printCln:
  LOADFP
  LOADSP
@@ -78,6 +101,7 @@ VT_System:
  PRNLN
  STOREFP
  RET 1
+  
  printSln:
  LOADFP
  LOADSP
@@ -87,6 +111,7 @@ VT_System:
  PRNLN
  STOREFP
  RET 1
+  
  read:
  LOADFP
  LOADSP
@@ -94,6 +119,7 @@ VT_System:
  READ
  STOREFP
  RET 1
+  
  printB:
  LOADFP
  LOADSP
@@ -102,6 +128,7 @@ VT_System:
  BPRINT
  STOREFP
  RET 1
+  
  printIln:
  LOADFP
  LOADSP
@@ -111,6 +138,7 @@ VT_System:
  PRNLN
  STOREFP
  RET 1
+  
  printI:
  LOADFP
  LOADSP
@@ -119,6 +147,7 @@ VT_System:
  IPRINT
  STOREFP
  RET 1
+  
  printBln:
  LOADFP
  LOADSP
@@ -126,5 +155,12 @@ VT_System:
  LOAD 3
  BPRINT
  PRNLN
+ STOREFP
+ RET 1
+  
+ System:
+ LOADFP
+ LOADSP
+ STOREFP
  STOREFP
  RET 1

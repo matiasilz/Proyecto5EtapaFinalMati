@@ -198,7 +198,7 @@ public class Clase {
         }
 
         //chequear que el constructor sea del tipo de la clase
-        if (!constructor.getTipo().getToken().getLexema().equals(tkClase.getLexema()))
+        if (!constructor.getNombre().equals(nombre))
             throw new SemanticoExcepcion(constructor.getTkMetodo(), "El tipo de retorno del constructor debe ser el mismo que el de la clase");
     }
 
@@ -214,30 +214,65 @@ public class Clase {
         for (Metodo metodo : metodos.values()) {
             metodo.check();
         }
+        constructor.check();
     }
 
     public void generarVT() {
-        tablaDeSimbolos.codigoGenerado.add("VT_" + nombre + ":");
-        String etiquetametodo = "DW ";
+        ArrayList<Metodo> metodosEnOrden = new ArrayList<Metodo>();
+        //vamos a filtrar los metodos que no son estaticos y ademas los vamos a acomodar segun su offset
         for (Metodo metodo : metodos.values()) {
-            etiquetametodo += metodo.getNombre() + ", ";
+            if (!metodo.isStatico()) {
+                metodosEnOrden.add(metodo);
+            }
+        }
+        //ordenamos los metodos segun su offset
+        for (int i = 0; i < metodosEnOrden.size(); i++) {
+            for (int j = 0; j < metodosEnOrden.size() - 1; j++) {
+                if (metodosEnOrden.get(j).getOffset() > metodosEnOrden.get(j + 1).getOffset()) {
+                    Metodo aux = metodosEnOrden.get(j);
+                    metodosEnOrden.set(j, metodosEnOrden.get(j + 1));
+                    metodosEnOrden.set(j + 1, aux);
+                }
+            }
+        }
+        tablaDeSimbolos.codigoGenerado.add("VT_" + nombre + ":");
+        String etiquetametodo = "";
+        if (metodosEnOrden.isEmpty()){
+            etiquetametodo += "NOP, ";
+        }else{
+            etiquetametodo += "DW ";
+            for (Metodo metodo : metodosEnOrden) {
+                etiquetametodo += metodo.getNombre() + ", ";
+            }
         }
         tablaDeSimbolos.codigoGenerado.add(etiquetametodo.substring(0, etiquetametodo.length() - 2));
     }
 
     public void setOffsetMetodos() {
+        HashMap<String, Metodo> metodosRevisados = new HashMap<String, Metodo>();
         if (clasesAncestras.size() > 0) {
             for (Clase claseAncestra : clasesAncestras.values()) {
-                offSetVt += claseAncestra.getMetodos().size();
+                for (Metodo metodo : claseAncestra.getMetodos().values()) {
+                    if (!metodo.isStatico() && !metodosRevisados.containsKey(metodo.getNombre())) {
+                        offSetVt++;
+                    }
+                    metodosRevisados.put(metodo.getNombre(), metodo);
+                }
             }
             for (Metodo metodo : metodos.values()) {
                 if (!metodo.isStatico()) {
-                    if (!metodo.isTieneOffset())
+                    if (!metodo.isTieneOffset()){
                         metodo.setOffset(offSetVt);
-                    offSetVt++;
+                        offSetVt++;
+                    }
                 }
             }
         }
+        System.out.println("Printing all offsets of methods for class " + nombre);
+        for (Metodo metodo : metodos.values()) {
+            System.out.println(metodo.getNombre() + " : " + metodo.getOffset());
+        }
+        System.out.println("///////////////////////////////");
     }
     public void setOffsetAtributos() {
         if (clasesAncestras.size() > 0) {
@@ -245,14 +280,21 @@ public class Clase {
                 offSetClassInstance += claseAncestra.getAtributos().size();
             }
             for (Atributo atributo : atributos.values()) {
-                if (!atributo.isTieneOffset())
+                if (!atributo.isTieneOffset()){
                     atributo.setOffset(offSetClassInstance);
-                offSetClassInstance++;
+                    offSetClassInstance++;
+                }
             }
         }
+        System.out.println("Printing all offsets of attributes for class " + nombre);
+        for (Atributo atributo : atributos.values()) {
+            System.out.println(atributo.getNombre() + " : " + atributo.getOffset());
+        }
+        System.out.println("///////////////////////////////");
     }
 
     public void generarCodigo() {
+
         for (Metodo metodo : metodos.values()) {
             boolean esDeClase = true;
             for (Clase clase : clasesAncestras.values() ) {
@@ -263,8 +305,11 @@ public class Clase {
             if (esDeClase) {
                 tablaDeSimbolos.codigoGenerado.add(metodo.getNombre() + ":");
                 metodo.generarCodigo();
+                tablaDeSimbolos.codigoGenerado.add(" ");
             }
 
         }
+        tablaDeSimbolos.codigoGenerado.add(nombre + ":");
+        constructor.generarCodigo();
     }
 }

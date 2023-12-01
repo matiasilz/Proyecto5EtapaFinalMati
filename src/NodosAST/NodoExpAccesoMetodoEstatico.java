@@ -48,14 +48,19 @@ public class NodoExpAccesoMetodoEstatico extends NodoAcceso {
         } else {
             throw new SemanticoExcepcion(idMetVar, "El metodo " + idMetVar.getLexema() + " no existe");
         }
+        metodoALlamar = clase.getMetodos().get(idMetVar.getLexema());
+        System.out.println("Metodo a llamar: " + metodoALlamar.getNombre() + " con tipo de retorno: " + metodoALlamar.getTipo().getToken().getLexema());
         if (encadenadoHijo != null)
             return encadenadoHijo.check();
-        else
+        else{
             return clase.getMetodos().get(idMetVar.getLexema()).getTipo();
-
+        }
     }
 
     public void generarCodigo() {
+        System.out.println("Generando codigo de llamada a metodo estatico");
+        System.out.println("Metodo a llamar: " + idMetVar.getLexema() + " en la clase " + idClase.getLexema() + " llamada en la linea " + idMetVar.getNroLinea());
+
         if (!metodoALlamar.getTipo().getToken().getLexema().equals("void")){
             tablaDeSimbolos.codigoGenerado.add("RMEM 1");
         }

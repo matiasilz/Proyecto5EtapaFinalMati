@@ -2,19 +2,14 @@ package analizadorSemantico;
 
 import analizadorLexico.Token;
 
-public class Parametro {
-    private Token tkParametro;
-    private String nombre;
-    private Tipo tipo;
+public class Parametro extends Atributo{
 
     public Parametro(Token tkParametro, Tipo tipo)
     {
-        this.tkParametro = tkParametro;
-        nombre = tkParametro.getLexema();
-        this.tipo = tipo;
+        super(tkParametro, tipo);
     }
     public Token getTkParametro() {
-        return tkParametro;
+        return tkAtributo;
     }
     public String getNombre() {
         return nombre;
@@ -30,5 +25,10 @@ public class Parametro {
 
 
     public void setOffset(int i) {
+        offset = i;
+    }
+
+    public int getOffset() {
+        return offset;
     }
 }

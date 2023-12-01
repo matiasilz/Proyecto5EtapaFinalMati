@@ -85,7 +85,7 @@ public class NodoBloque implements NodoBase {
             ret = varLocals.get(nombre);
             ret.setVarLocal(true);
         } else if (metodoActual.getParametrosMap().containsKey(nombre)) {
-            Atributo a = new Atributo(metodoActual.getParametrosMap().get(nombre).getTkParametro(), metodoActual.getParametrosMap().get(nombre).getTipo());
+            Atributo a = metodoActual.getParametrosMap().get(nombre);
             ret = a;
             ret.setParametro(true);
         } else if (claseActual.getAtributos().containsKey(nombre)) {
@@ -99,8 +99,24 @@ public class NodoBloque implements NodoBase {
     }
 
     public void generarCodigo() {
+        //primero seteamos offsets de las variables locales
+        for (Atributo a : varLocals.values()) {
+            a.setOffset(ultimoOffset);
+            ultimoOffset++;
+        }
         for (NodoBase sentencia:sentencias) {
             sentencia.generarCodigo();
+            //si es un nodo acceso y su tipo es diferente de void hacer POP
+            if (sentencia instanceof NodoAcceso){
+                NodoAcceso aux = (NodoAcceso) sentencia;
+                Tipo tipo = null;
+                if (aux.alFinalDelEncadenadoEsMetodo()){
+                    tipo = aux.getTipo();
+                    if (!tipo.tokenTipo.getLexema().equals("void")){
+                        tablaDeSimbolos.codigoGenerado.add("POP # " + tipo.tokenTipo.getLexema());
+                    }
+                }
+            }
         }
         if(nodoPadre!=null){
             tablaDeSimbolos.codigoGenerado.add("FMEM "+ varLocals.size());

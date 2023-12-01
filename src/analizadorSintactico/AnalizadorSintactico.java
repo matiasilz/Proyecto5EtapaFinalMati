@@ -39,7 +39,7 @@ public class AnalizadorSintactico {
         tablaDeSimbolos.realizarChequeos();
         tablaDeSimbolos.consolidar();
         tablaDeSimbolos.chequeosFinales();
-        tablaDeSimbolos.mostrar();
+        //tablaDeSimbolos.mostrar();
         tablaDeSimbolos.check();
         tablaDeSimbolos.generarCodigo();
         generarArchivoSalida(tablaDeSimbolos.codigoGenerado,salida);

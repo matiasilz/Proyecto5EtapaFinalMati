@@ -1,0 +1,289 @@
+.CODE
+ PUSH main
+ CALL
+ HALT
+Lmalloc:
+ LOADFP 
+ LOADSP
+ STOREFP
+ LOADHL
+ DUP
+ PUSH 1
+ ADD
+ STORE 4
+ LOAD 3
+ ADD
+ STOREHL
+ STOREFP
+ RET 1
+.DATA
+VT_A:
+ DW bMet
+VT_B:
+ DW aMet, entero
+VT_Object:
+ NOP
+VT_String:
+ NOP
+VT_MainModule:
+ NOP
+VT_System:
+ NOP
+.CODE
+ bMet:
+ LOADFP
+ LOADSP
+ STOREFP
+.DATA
+ etiquetaString0: DW "ObtengoobjetoB", 0
+.CODE
+ PUSH etiquetaString0
+ PUSH printSln
+ CALL
+ FMEM 0 ; Reservo espacio para las variables locales
+ RMEM 1
+ PUSH 2
+ PUSH Lmalloc
+ CALL
+ DUP
+ PUSH VT_B
+ STOREREF 0
+ DUP
+ PUSH B
+ CALL
+ STORE 4
+ STOREFP
+ RET 1 ; Se liberan 1 lugares de la pila
+ FMEM 0
+ STOREFP
+ RET 1
+  
+ A:
+ LOADFP
+ LOADSP
+ STOREFP
+ STOREFP
+ RET 1
+ aMet:
+ LOADFP
+ LOADSP
+ STOREFP
+.DATA
+ etiquetaString0: DW "ObtengoobjetoA", 0
+.CODE
+ PUSH etiquetaString0
+ PUSH printSln
+ CALL
+ FMEM 0 ; Reservo espacio para las variables locales
+ RMEM 1
+ PUSH 1
+ PUSH Lmalloc
+ CALL
+ DUP
+ PUSH VT_A
+ STOREREF 0
+ DUP
+ PUSH A
+ CALL
+ STORE 4
+ STOREFP
+ RET 1 ; Se liberan 1 lugares de la pila
+ FMEM 0
+ STOREFP
+ RET 1
+  
+ entero:
+ LOADFP
+ LOADSP
+ STOREFP
+ FMEM 0 ; Reservo espacio para las variables locales
+ PUSH 5
+ PUSH 4
+ ADD
+ STORE 4
+ STOREFP
+ RET 1 ; Se liberan 1 lugares de la pila
+ FMEM 0
+ STOREFP
+ RET 1
+  
+ B:
+ LOADFP
+ LOADSP
+ STOREFP
+ STOREFP
+ RET 1
+ debugPrint:
+ LOADFP
+ LOADSP
+ STOREFP
+ LOAD 3
+ IPRINT
+ PRNLN
+ STOREFP
+ RET 1
+  
+ Object:
+ LOADFP
+ LOADSP
+ STOREFP
+ STOREFP
+ RET 1
+ String:
+ LOADFP
+ LOADSP
+ STOREFP
+ STOREFP
+ RET 1
+ main:
+ LOADFP
+ LOADSP
+ STOREFP
+ RMEM 1
+ RMEM 1
+ PUSH 1
+ PUSH Lmalloc
+ CALL
+ DUP
+ PUSH VT_A
+ STOREREF 0
+ DUP
+ PUSH A
+ CALL
+ STORE 0
+ LOAD 0
+ RMEM 1
+ SWAP
+ DUP 
+ LOADREF 0
+ LOADREF 0
+ CALL
+ RMEM 1
+ SWAP
+ DUP 
+ LOADREF 0
+ LOADREF 0
+ CALL
+ RMEM 1
+ SWAP
+ DUP 
+ LOADREF 0
+ LOADREF 0
+ CALL
+ RMEM 1
+ SWAP
+ DUP 
+ LOADREF 0
+ LOADREF 1
+ CALL
+ PUSH printIln
+ CALL
+ FMEM 1
+ STOREFP
+ RET 0
+  
+ MainModule:
+ LOADFP
+ LOADSP
+ STOREFP
+ STOREFP
+ RET 1
+ printC:
+ LOADFP
+ LOADSP
+ STOREFP
+ LOAD 3
+ CPRINT
+ STOREFP
+ RET 1
+  
+ printS:
+ LOADFP
+ LOADSP
+ STOREFP
+ LOAD 3
+ SPRINT
+ STOREFP
+ RET 1
+  
+ println:
+ LOADFP
+ LOADSP
+ STOREFP
+ IPRINT
+ PRNLN
+ STOREFP
+ RET 0
+  
+ printCln:
+ LOADFP
+ LOADSP
+ STOREFP
+ LOAD 3
+ CPRINT
+ PRNLN
+ STOREFP
+ RET 1
+  
+ printSln:
+ LOADFP
+ LOADSP
+ STOREFP
+ LOAD 3
+ SPRINT
+ PRNLN
+ STOREFP
+ RET 1
+  
+ read:
+ LOADFP
+ LOADSP
+ STOREFP
+ READ
+ STOREFP
+ RET 1
+  
+ printB:
+ LOADFP
+ LOADSP
+ STOREFP
+ LOAD 3
+ BPRINT
+ STOREFP
+ RET 1
+  
+ printIln:
+ LOADFP
+ LOADSP
+ STOREFP
+ LOAD 3
+ IPRINT
+ PRNLN
+ STOREFP
+ RET 1
+  
+ printI:
+ LOADFP
+ LOADSP
+ STOREFP
+ LOAD 3
+ IPRINT
+ STOREFP
+ RET 1
+  
+ printBln:
+ LOADFP
+ LOADSP
+ STOREFP
+ LOAD 3
+ BPRINT
+ PRNLN
+ STOREFP
+ RET 1
+  
+ System:
+ LOADFP
+ LOADSP
+ STOREFP
+ STOREFP
+ RET 1
